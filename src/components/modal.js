@@ -15,15 +15,3 @@ export function openModal(popup) {
     popup.classList.add('popup_is-opened');
     document.addEventListener('keydown', closeModalEsc);
 }
-
-//Открытие попапа с картинкой
-export function openImagePopup(link, name) {
-    const popupImage = document.querySelector('.popup_type_image');
-    const popupImagePicture = popupImage.querySelector('.popup__image');
-    const popupImageCaption = popupImage.querySelector('.popup__caption');
-
-    popupImagePicture.src = link;
-    popupImagePicture.alt = name;
-    popupImageCaption.textContent = name;
-    openModal(popupImage);
-}

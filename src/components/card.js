@@ -1,7 +1,5 @@
-import { openImagePopup } from './modal.js';
-
 // Функция создания карточки
-export function createCard(element, deleteCard) {
+export function createCard(element, deleteCard, openImagePopup) {
     const cardTemplate = document.querySelector('#card-template').content;
     const elementCard = cardTemplate.querySelector('.places__item').cloneNode(true);
     const deleteButton = elementCard.querySelector('.card__delete-button');
