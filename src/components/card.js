@@ -5,10 +5,11 @@ export function createCard(element, deleteCard, openImagePopup) {
     const deleteButton = elementCard.querySelector('.card__delete-button');
     const likeButton = elementCard.querySelector('.card__like-button');
     const cardImage = elementCard.querySelector('.card__image');
+    const cardTitle = elementCard.querySelector('.card__title');
 
-    elementCard.querySelector('.card__image').alt = element.name;
-    elementCard.querySelector('.card__image').src = element.link;
-    elementCard.querySelector('.card__title').textContent = element.name;
+    cardImage.alt = element.name;
+    cardImage.src = element.link;
+    cardTitle.textContent = element.name;
 
     deleteButton.addEventListener('click', deleteCard);
     likeButton.addEventListener('click', likeCard);
