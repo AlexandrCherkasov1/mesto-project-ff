@@ -1,1 +1,1 @@
-# [Проектная работа Mesto](https://alexandrcherkasov1.github.io/mesto-project-ff/)
+# [Проектная работа Mesto](https://alexandrcherkasov1.github.io/mesto-project-ff/){:target="_blank"}
