@@ -1,5 +1,4 @@
 import { getInitialCards, addNewCard, deleteCard, likeCard, unlikeCard } from './api.js';
-import { openModal } from './modal.js';
 
 export { loadInitialCards, handleAddCard };
 
