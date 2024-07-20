@@ -1,10 +1,10 @@
 import { getInitialCards, addNewCard, deleteCard, likeCard, unlikeCard } from './api.js';
 import { openModal } from './modal.js';
 
-export { loadInitialCards, handleAddCard, openImagePopup };
+export { loadInitialCards, handleAddCard };
 
 // Функция создания карточки
-export function createCard(data, userId) {
+export function createCard(data, userId, openImagePopup) {
     const cardTemplate = document.querySelector('#card-template').content;
     const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
 
@@ -25,7 +25,7 @@ export function createCard(data, userId) {
 
     deleteButton.addEventListener('click', () => handleDeleteCard(data._id, cardElement));
     likeButton.addEventListener('click', () => {
-        if (likeButton.classList.contains('card__like-button_active')) {
+        if (likeButton.classList.contains('card__like-button_is-active')) {
             handleUnlikeCard(data._id, likeButton, likeCount);
         } else {
             handleLikeCard(data._id, likeButton, likeCount);
@@ -34,7 +34,7 @@ export function createCard(data, userId) {
     cardImage.addEventListener('click', () => openImagePopup(data.link, data.name));
 
     if (data.likes.some((like) => like._id === userId)) {
-        likeButton.classList.add('card__like-button_active');
+        likeButton.classList.add('card__like-button_is-active');
     }
 
     return cardElement;
@@ -47,11 +47,11 @@ function renderCard(cardElement) {
 }
 
 // Загрузка начальных карточек
-function loadInitialCards(userId) {
+function loadInitialCards(userId, openImagePopup) {
     getInitialCards()
         .then((cards) => {
             cards.forEach((card) => {
-                const cardElement = createCard(card, userId);
+                const cardElement = createCard(card, userId, openImagePopup);
                 renderCard(cardElement);
             });
         })
@@ -61,10 +61,10 @@ function loadInitialCards(userId) {
 }
 
 // Обработчик добавления новой карточки
-function handleAddCard(formData) {
+function handleAddCard(formData, openImagePopup) {
     addNewCard(formData.name, formData.link)
         .then((newCard) => {
-            const cardElement = createCard(newCard, newCard.owner._id);
+            const cardElement = createCard(newCard, newCard.owner._id, openImagePopup);
             renderCard(cardElement);
         })
         .catch((err) => {
@@ -105,15 +105,4 @@ function handleUnlikeCard(cardId, likeButton, likeCount) {
         .catch((err) => {
             console.log(err);
         });
-}
-
-// Функция открытия попапа картинки
-function openImagePopup(link, name) {
-    const popupImage = document.querySelector('.popup_type_image');
-    const popupImagePicture = popupImage.querySelector('.popup__image');
-    const popupImageCaption = popupImage.querySelector('.popup__caption');
-    popupImagePicture.src = link;
-    popupImagePicture.alt = name;
-    popupImageCaption.textContent = name;
-    openModal(popupImage);
 }
