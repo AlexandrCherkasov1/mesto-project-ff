@@ -28,6 +28,8 @@ const avatarForm = avatarPopup.querySelector('.popup__form');
 const avatarInput = avatarPopup.querySelector('#avatar-url_input');
 const avatarImage = document.querySelector('.profile__image');
 
+let userId;
+
 const validationConfig = {
     formSelector: '.popup__form',
     inputSelector: '.popup__input',
@@ -36,6 +38,38 @@ const validationConfig = {
     inputErrorClass: 'popup__input_type_error',
     errorClass: 'popup__error_visible'
 };
+
+// Функция добавления карточки в контейнер
+function renderCard(cardElement) {
+    const cardContainer = document.querySelector('.places__list');
+    cardContainer.prepend(cardElement);
+}
+
+// Загрузка начальных карточек
+function loadInitialCards(userId, openImagePopup) {
+    getInitialCards()
+        .then((cards) => {
+            cards.forEach((card) => {
+                const cardElement = createCard(card, userId, openImagePopup);
+                renderCard(cardElement);
+            });
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+}
+
+// Обработчик добавления новой карточки
+function handleAddCard(formData, openImagePopup) {
+    return addNewCard(formData.name, formData.link)
+        .then((newCard) => {
+            const cardElement = createCard(newCard, newCard.owner._id, openImagePopup);
+            renderCard(cardElement);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+}
 
 // Загрузка начальных карточек и информации о пользователе
 Promise.all([getUserInfo(), getInitialCards()])
@@ -111,10 +145,8 @@ popupAddForm.addEventListener('submit', (evt) => {
         link: cardLink.value,
     };
     // Добавление новой карточки
-    addNewCard(newCard.name, newCard.link)
-        .then((newCard) => {
-            const cardElement = createCard(newCard, newCard.owner._id);
-            placesList.prepend(cardElement);
+    handleAddCard(newCard, openImagePopup)
+        .then(() => {
             closeModal(popupAddCard);
             popupAddForm.reset();
         })
@@ -156,3 +188,5 @@ popups.forEach((popup) => {
 
 // Включение валидации
 enableValidation(validationConfig);
+
+loadInitialCards(userId, openImagePopup);

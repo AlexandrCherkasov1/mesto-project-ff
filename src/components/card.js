@@ -1,9 +1,9 @@
-import { getInitialCards, addNewCard, deleteCard, likeCard, unlikeCard } from './api.js';
+import { deleteCard, likeCard, unlikeCard } from './api.js';
 
-export { loadInitialCards, handleAddCard };
+export { createCard };
 
 // Функция создания карточки
-export function createCard(data, userId, openImagePopup) {
+function createCard(data, userId, openImagePopup) {
     const cardTemplate = document.querySelector('#card-template').content;
     const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
 
@@ -37,38 +37,6 @@ export function createCard(data, userId, openImagePopup) {
     }
 
     return cardElement;
-}
-
-// Функция добавления карточки в контейнер
-function renderCard(cardElement) {
-    const cardContainer = document.querySelector('.places__list');
-    cardContainer.prepend(cardElement);
-}
-
-// Загрузка начальных карточек
-function loadInitialCards(userId, openImagePopup) {
-    getInitialCards()
-        .then((cards) => {
-            cards.forEach((card) => {
-                const cardElement = createCard(card, userId, openImagePopup);
-                renderCard(cardElement);
-            });
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-}
-
-// Обработчик добавления новой карточки
-function handleAddCard(formData, openImagePopup) {
-    addNewCard(formData.name, formData.link)
-        .then((newCard) => {
-            const cardElement = createCard(newCard, newCard.owner._id, openImagePopup);
-            renderCard(cardElement);
-        })
-        .catch((err) => {
-            console.log(err);
-        });
 }
 
 // Обработчик удаления карточки
