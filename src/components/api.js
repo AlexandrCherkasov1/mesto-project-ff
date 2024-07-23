@@ -1,111 +1,108 @@
-export { getUserInfo, getInitialCards, updateUserInfo, addNewCard, deleteCard, likeCard, unlikeCard, updateAvatar };
+export { getUserInfo, getInitialCards, updateUserInfo, addNewCard, deleteCard, likeCard, unlikeCard, updateAvatar, headValidUrl };
 
 const config = {
-    baseUrl: 'https://mesto.nomoreparties.co/v1/wff-cohort-18',
-    headers: {
-      authorization: 'd9027374-eb80-4b90-a01a-d8a675ab1b69',
-      'Content-Type': 'application/json'
-    }
+  baseUrl: 'https://mesto.nomoreparties.co/v1/wff-cohort-18',
+  headers: {
+    authorization: 'd9027374-eb80-4b90-a01a-d8a675ab1b69',
+    'Content-Type': 'application/json'
+  }
 }
 
-// Далее функции
-// Вынес в отдельную функцию проверку ответа от сервера
+// Универсальная функция запроса с проверкой ответа
+const request = (endpoint, options) => {
+  return fetch(`${config.baseUrl}${endpoint}`, options).then(checkResponse);
+}
+
+// Проверка ответа от сервера
 const checkResponse = (res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
+  if (res.ok) {
+    return res.json();
+  }
+  return Promise.reject(`Ошибка: ${res.status}`);
 }
 
 // Получение информации о пользователе
 const getUserInfo = () => {
-    return fetch(`${config.baseUrl}/users/me`, {
-      headers: config.headers
-    })
-    .then(checkResponse);
+  return request('/users/me', {
+    headers: config.headers
+  });
 }
 
 // Получение начальных карточек
 const getInitialCards = () => {
-    return fetch(`${config.baseUrl}/cards`, {
-      headers: config.headers
-    })
-      .then(checkResponse);
+  return request('/cards', {
+    headers: config.headers
+  });
 }
 
 // Обновление информации о пользователе
 const updateUserInfo = (name, about) => {
-    return fetch(`${config.baseUrl}/users/me`, {
-      method: 'PATCH',
-      headers: config.headers,
-      body: JSON.stringify({
-        name: name,
-        about: about
-      })
+  return request('/users/me', {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      name: name,
+      about: about
     })
-      .then(checkResponse);
+  });
 }
 
 // Добавление новой карточки
 const addNewCard = (name, link) => {
-    return fetch(`${config.baseUrl}/cards`, {
-      method: 'POST',
-      headers: config.headers,
-      body: JSON.stringify({
-        name: name,
-        link: link
-      })
+  return request('/cards', {
+    method: 'POST',
+    headers: config.headers,
+    body: JSON.stringify({
+      name: name,
+      link: link
     })
-      .then(checkResponse);
+  });
 }
 
 // Функция для удаления карточки
 const deleteCard = (cardId) => {
-    return fetch(`${config.baseUrl}/cards/${cardId}`, {
-      method: 'DELETE',
-      headers: config.headers
-    })
-      .then(checkResponse);
-}
-  
-// Лайк карточки
-const likeCard = (cardId) => {
-    return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
-      method: 'PUT',
-      headers: config.headers
-    })
-      .then(checkResponse);
-}
-  
-// Удаление лайка
-const unlikeCard = (cardId) => {
-    return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
-      method: 'DELETE',
-      headers: config.headers
-    })
-      .then(checkResponse);
-}
-  
-// Обновления аватарки пользователя
-const updateAvatar = (avatarUrl) => {
-    return fetch(`${config.baseUrl}/users/me/avatar`, {
-      method: 'PATCH',
-      headers: config.headers,
-      body: JSON.stringify({
-        avatar: avatarUrl
-      })
-    })
-      .then(checkResponse);
+  return request(`/cards/${cardId}`, {
+    method: 'DELETE',
+    headers: config.headers
+  });
 }
 
-export const headValidUrl = (linkImage) => {
-    return fetch(`${linkImage}`, {
-      method: 'HEAD'
+// Лайк карточки
+const likeCard = (cardId) => {
+  return request(`/cards/likes/${cardId}`, {
+    method: 'PUT',
+    headers: config.headers
+  });
+}
+
+// Удаление лайка
+const unlikeCard = (cardId) => {
+  return request(`/cards/likes/${cardId}`, {
+    method: 'DELETE',
+    headers: config.headers
+  });
+}
+
+// Обновление аватарки пользователя
+const updateAvatar = (avatarUrl) => {
+  return request('/users/me/avatar', {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      avatar: avatarUrl
     })
-    .then((res) => {
-      if (res.ok) {
-        return res.headers.get('content-type')
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
+  });
+}
+
+// Проверка валидности URL
+const headValidUrl = (linkImage) => {
+  return fetch(linkImage, {
+    method: 'HEAD'
+  })
+  .then((res) => {
+    if (res.ok) {
+      return res.headers.get('content-type');
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
 }
